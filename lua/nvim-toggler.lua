@@ -106,8 +106,14 @@ function app:toggle()
       end
     end
   end
-  if #results == 0 then return log.warn('unsupported value.') end
-  if #results == 1 then return self.sub(line, results[1]) end
+  if #results == 0 then
+    log.warn('unsupported value.')
+    return false
+  end
+  if #results == 1 then
+    self.sub(line, results[1])
+    return true
+  end
   -- handle multiple results
   table.sort(results, function(a, b) return a.word < b.word end)
   local prompt, fmt = {}, '[%d] %s -> %s'
@@ -120,8 +126,10 @@ function app:toggle()
   if result then
     app.sub(line, result)
     log.echo(('%s -> %s'):format(result.word, result.inverse))
+    return true
   else
     log.echo('nothing happened.')
+    return false
   end
 end
 
